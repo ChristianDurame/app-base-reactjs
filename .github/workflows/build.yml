@@ -1,0 +1,43 @@
+name: React CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupère ton code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Installe Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 3. Installe les dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Build l’application React
+      - name: Build React app
+        run: npm run build
+
+      # 5. (Optionnel) Lancer des tests
+      - name: Run tests
+        run: npm test -- --watchAll=false
+
+      # 6. (Optionnel) Vérifier avec curl que le dev server répond
+      - name: Start React dev server
+        run: npm start &
+
+      - name: Check server with curl
+        run: |
+          sleep 15 # attendre que le serveur démarre
+          curl -f http://localhost:3000
